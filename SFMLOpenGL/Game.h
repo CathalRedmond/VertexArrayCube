@@ -3,6 +3,7 @@
 #include <SFML/OpenGL.hpp>
 #include <gl/GL.h>
 #include <gl/GLU.h>
+#include <vector>
 
 #include <Vector3D.h>
 #include <Matrix3D.h>
@@ -27,10 +28,25 @@ private:
 	Clock clock;
 	Time elapsed;
 
-	Vector3D cubeVertexPositions[8];
 	bool transform{ false };
 	Matrix3D m_matrix;
-	Vector3D colours[6];
 
 	float rotationAngle = 0.0f;
+
+	float vertices[24];
+	
+	
+
+	unsigned int vertex_index[36] = { 0,1,2,  0,2,3,
+									  4,5,6,  4,6,7,
+									  1,2,5,  2,5,6,
+									  0,3,4,  3,4,7,
+									  0,1,4,  1,4,5,
+									  2,3,6,  3,6,7, };
+	Vector3D cubeVertexPosition[8];
+
+	
+	
+
+
 };

@@ -5,32 +5,31 @@ int current = 1;
 
 Game::Game() : window(VideoMode(800, 600), "OpenGL Cube")
 {
-	int i = 0;
+	 cubeVertexPosition[0] = Vector3D(1.0, 1.0, -2.0);
+	 cubeVertexPosition[1] = Vector3D(-1.0, 1.0, -2.0);
+	 cubeVertexPosition[2] = Vector3D(-1.0, -1.0, -2.0);
+	 cubeVertexPosition[3] = Vector3D(1.0, -1.0, -2.0);
+	 cubeVertexPosition[4] = Vector3D(1.0, 1.0, -4.0);
+	 cubeVertexPosition[5] = Vector3D(-1.0, 1.0, -4.0);
+	 cubeVertexPosition[6] = Vector3D(-1.0, -1.0, -4.0);
+	 cubeVertexPosition[7] = Vector3D(1.0, -1.0, -4.0);
+
+
+	 for (int index = 0; index < 8; index ++)
+	 {
+		 vertices[index * 3] = cubeVertexPosition[index].Xf();
+		 vertices[(index * 3) + 1] = cubeVertexPosition[index].Yf();
+		 vertices[(index * 3) + 2] = cubeVertexPosition[index].Zf();
+	 }
 }
 
 Game::~Game() {}
 
-float vertices[] = { 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,-1.0f, -1.0f,
-					 1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f,-1.0f, 1.0f,
-					 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f,1.0f, 1.0f, 
-					-1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f,-1.0f, 1.0f,
-					-1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f,1.0f, 1.0f,
 
-					 1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f,1.0f, 1.0f };
 
-float colors[] = { 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-				   0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 
-				   0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 
-				   1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-				   1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-				   0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f };
 
-unsigned int vertex_index[] = { 0, 1, 2, 3,
-								4, 5, 6, 7, 
-								8, 9, 10, 11, 
-								12, 13, 14, 15, 
-								16, 17, 18, 19, 
-								20, 21, 22, 23, };
+
+
 
 void Game::run()
 {
@@ -41,7 +40,6 @@ void Game::run()
 
 	while (isRunning) {
 
-		cout << "Game running..." << endl;
 
 		while (window.pollEvent(event))
 		{
@@ -128,29 +126,32 @@ void Game::update()
 {
 	elapsed = clock.getElapsedTime();
 
+
+
+	Vector3D centre;
+	for (int index = 0; index < 8; index++)
+	{
+		centre = centre + cubeVertexPosition[index];
+	}
+	centre = centre * (1 / 8.0);
+
 	if (transform)
 	{
-		for (int index = 0; index < 72; index += 3)
+		for (int index = 0; index < 8; index++)
 		{
-			Vector3D vector(vertices[index], vertices[index + 1], vertices[index + 2]);
-			vector = vector * m_matrix;
-
-			vertices[index] = vector.Xf();
-
-			vertices[index + 1] = vector.Yf();
-
-			vertices[index + 2] = vector.Zf();
+			cubeVertexPosition[index] = ((cubeVertexPosition[index] - centre) * m_matrix) + centre;
+			vertices[index * 3] = cubeVertexPosition[index].Xf();
+			vertices[(index * 3) + 1] = cubeVertexPosition[index].Yf();
+			vertices[(index * 3) + 2] = cubeVertexPosition[index].Zf();
 		}
 		transform = false;
 	}
 	
 
-	cout << "Update up" << endl;
 }
 
 void Game::render()
 {
-	cout << "Drawing" << endl;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
@@ -159,9 +160,8 @@ void Game::render()
 	glVertexPointer(3, GL_FLOAT, 0, &vertices);
 	glColorPointer(3, GL_FLOAT, 0, &colors);
 
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
 
-	glDrawElements(GL_QUADS, 24, GL_UNSIGNED_INT, &vertex_index);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, &vertex_index);
 
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
