@@ -35,7 +35,14 @@ private:
 
 	float vertices[24];
 	
-	
+	float colors[24] = { 1.0f,0.0f,0.0f,
+						 0.0f,1.0f,0.0f,
+						 0.0f,0.0f,1.0f,
+					     1.0f,1.0f,0.0f,
+		                 0.0f,1.0f,1.0f,
+						 1.0f,0.0f,1.0f,
+						 0.5f,0.5f,0.0f,
+						 0.0f,0.0f,0.5f, };
 
 	unsigned int vertex_index[36] = { 0,1,2,  0,2,3,
 									  4,5,6,  4,6,7,
